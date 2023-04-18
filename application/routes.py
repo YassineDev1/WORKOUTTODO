@@ -1,7 +1,7 @@
 from application import app, mongodb_client
 from flask import jsonify, request
 from flask_jwt_extended import (create_access_token, create_refresh_token, jwt_required, get_jwt_identity)
-from .models import User
+from .models import User, Workout
 @app.route("/")
 
 def index():
@@ -56,3 +56,18 @@ def register():
             "refresh-token": refresh
         })
     return jsonify({"message": "Email Already Exist"})
+
+#Create a Workout
+@app.route("/api/workouts", methods=["POST"])
+def create_workout():
+    json = request.json
+    title = json['title']
+    reps = json['reps']    
+    load = json['load']
+    if not title or not reps or not load:
+        return jsonify({"error": "Missing fields"}), 400
+
+    workout = Workout(title=title, reps=reps, load=load)
+    workout.save()
+
+    return jsonify({"success": "Workout created successfully"}), 201
