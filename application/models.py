@@ -12,6 +12,6 @@ class User:
         user = mongodb_client.db.users.find_one({"email": email})
         if not user:
             return None
-        return User(user["email"], user["password"])
+        return User(user["name"], user["email"], user["password"])
 
     
