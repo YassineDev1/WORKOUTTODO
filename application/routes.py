@@ -8,7 +8,7 @@ def index():
     return "Hello"
 
 #login
-@app.route("/login", methods=["POST"])
+@app.route("/api/users/login", methods=["POST"])
 
 def login():
     json = request.json
@@ -27,7 +27,8 @@ def login():
         "refresh-toke" : refresh
     }), 200
 
-@app.route("/signup", methods=["POST"])
+#Sign Up
+@app.route("/api/users/signup", methods=["POST"])
 
 def register():
     json = request.json
