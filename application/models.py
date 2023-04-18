@@ -14,4 +14,18 @@ class User:
             return None
         return User(user["name"], user["email"], user["password"])
 
-    
+class Workout:
+    def __init__(self, title, reps, load):
+        self.title = title
+        self.reps = reps
+        self.load = load
+
+    def to_json(self):
+        return {
+            "title": self.title,
+            "reps": self.reps,
+            "load": self.load
+        }
+    def save(self):
+        workouts = mongodb_client.db.workouts
+        workouts.insert_one(self.to_json())
