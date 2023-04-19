@@ -2,6 +2,7 @@ from application import app, mongodb_client
 from flask import jsonify, request
 from flask_jwt_extended import (create_access_token, create_refresh_token, jwt_required, get_jwt_identity)
 from .models import User, Workout
+import json 
 @app.route("/")
 
 def index():
@@ -71,3 +72,9 @@ def create_workout():
     workout.save()
 
     return jsonify({"success": "Workout created successfully"}), 201
+
+#All Workouts
+@app.route("/api/workouts", methods=["GET"])
+def get_workouts():
+    all_workouts = mongodb_client.db.workouts.find({},{'_id':0})
+    return jsonify({"workouts": [workout for workout in all_workouts]}), 200
