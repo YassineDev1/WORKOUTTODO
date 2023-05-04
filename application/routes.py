@@ -69,10 +69,10 @@ def create_workout():
     reps = request.json.get('reps')
     load = request.json.get('load')
     if not title or not reps or not load:
-        abort(400)  # Bad request
+        abort(400)  
     workout = Workout(title=title, reps=reps, load=load)
     workout.save()
-    return jsonify(workout=workout.to_json()), 201  # Created
+    return jsonify(workout=workout.to_json()), 201 
 
 
 #All Workouts
@@ -112,7 +112,7 @@ def update_workout(workout_id):
 def delete_workout(workout_id):
     workout = Workout.find_by_id(workout_id)
     if not workout:
-        jsonify({"message": "No Workout with this id"}), 404
+        abort(404)
     workout.delete()
     return jsonify({"message": "Workout Deleted"}), 204
 

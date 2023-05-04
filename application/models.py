@@ -1,4 +1,4 @@
-from application import app, mongodb_client, bcrypt
+from application import  mongodb_client
 from bson import ObjectId
 from flask_bcrypt import check_password_hash
 
