@@ -4,6 +4,7 @@ from flask import jsonify, request, abort
 from flask_jwt_extended import (create_access_token, create_refresh_token, jwt_required, get_jwt_identity)
 from .models import User, Workout
 from flask_bcrypt import generate_password_hash
+from flask_cors import cross_origin 
 
 
 # Default route
@@ -27,7 +28,7 @@ def login():
             "access-token": access_token,
             "refresh-token" : refresh
         }), 200
-    return jsonify({"message": "Invalid email or password"})
+    return jsonify({"message": "Invalid email or password"}), 401
 
 # User registration
 @app.route("/api/users/signup", methods=["POST"])
@@ -47,7 +48,7 @@ def register():
     existing_user = User.find_by_email(email)
 
     if existing_user:
-        return jsonify({"message": "Email already exists"}), 400
+        return jsonify({"message": "Email already exists"}), 206
 
     hashed_password = generate_password_hash(password).decode('utf-8')
 
@@ -58,12 +59,15 @@ def register():
     refresh_token = create_refresh_token(identity=user.email)
 
     return jsonify({
+        "message" : "Registred Successfully",
         "access_token": access_token,
         "refresh_token": refresh_token
     }), 201
 
 # Workout routes
 @app.route('/workouts', methods=['POST'])
+@cross_origin()
+@jwt_required()
 def create_workout():
     title = request.json.get('title')
     reps = request.json.get('reps')
@@ -77,12 +81,16 @@ def create_workout():
 
 #All Workouts
 @app.route("/api/workouts", methods=["GET"])
+@cross_origin()
+@jwt_required()
 def get_workouts():
     workouts = Workout.find_all()
     return jsonify(workouts=[workout.to_json() for workout in workouts])
 
 #Single Workout
 @app.route('/api/workouts/<workout_id>', methods=['GET'])
+@cross_origin()
+@jwt_required()
 def get_workout(workout_id):
     workout = Workout.find_by_id(workout_id)
     if not workout:
@@ -91,6 +99,8 @@ def get_workout(workout_id):
 
 #Update Workout
 @app.route('/api/workouts/<workout_id>', methods=['PUT'])
+@cross_origin()
+@jwt_required()
 def update_workout(workout_id):
     workout = Workout.find_by_id(workout_id)
     if not workout:
@@ -109,6 +119,8 @@ def update_workout(workout_id):
 
 #Delete Workout
 @app.route('/api/workouts/<workout_id>', methods=['DELETE'])
+@cross_origin()
+@jwt_required()
 def delete_workout(workout_id):
     workout = Workout.find_by_id(workout_id)
     if not workout:
