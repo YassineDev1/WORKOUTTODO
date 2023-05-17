@@ -17,6 +17,11 @@ class User:
         if not user:
             return None
         return User(user["name"], user["email"], user["password"])
+    def to_json(self):
+        return {
+            "name": self.name,
+            "email": self.email,
+        }
 
 class Workout:
     def __init__(self, title, reps, load):
@@ -26,7 +31,6 @@ class Workout:
 
     def to_json(self):
         return {
-            "_id": str(self._id),
             "title": self.title,
             "reps": self.reps,
             "load": self.load

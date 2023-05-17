@@ -25,8 +25,9 @@ def login():
         access_token = create_access_token(identity=user.email)
         refresh = create_refresh_token(identity=user.email)
         return jsonify({
-            "access-token": access_token,
-            "refresh-token" : refresh
+            "data": user.to_json(),
+            "accessToken": access_token,
+            "refreshToken" : refresh
         }), 200
     return jsonify({"message": "Invalid email or password"}), 401
 
@@ -60,8 +61,8 @@ def register():
 
     return jsonify({
         "message" : "Registred Successfully",
-        "access_token": access_token,
-        "refresh_token": refresh_token
+        "accessToken": access_token,
+        "refreshToken": refresh_token
     }), 201
 
 # Workout routes
@@ -85,7 +86,17 @@ def create_workout():
 @jwt_required()
 def get_workouts():
     workouts = Workout.find_all()
-    return jsonify(workouts=[workout.to_json() for workout in workouts])
+    serialized_workouts = []
+    for workout in workouts:
+        serialized_workout = {
+            "_id": str(workout._id),
+            "title" : workout.title,
+            "reps" : workout.reps,
+            "load" : workout.load
+        }
+        serialized_workouts.append(serialized_workout)
+    print(serialized_workouts)
+    return jsonify(workouts=serialized_workouts)
 
 #Single Workout
 @app.route('/api/workouts/<workout_id>', methods=['GET'])
