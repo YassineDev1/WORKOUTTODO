@@ -95,8 +95,6 @@ def create_workout():
 @cross_origin()
 @jwt_required()
 def get_workouts():
-    print(request.headers)
-    print(request.data)
     workouts = Workout.find_all()
     serialized_workouts = []
     for workout in workouts:
