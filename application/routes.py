@@ -24,10 +24,12 @@ def login():
     if user and user.check_password(password):
         access_token = create_access_token(identity=user.email)
         refresh = create_refresh_token(identity=user.email)
+        token_expires_in = app.config['JWT_ACCESS_TOKEN_EXPIRES'].total_seconds()
         return jsonify({
             "data": user.to_json(),
             "accessToken": access_token,
-            "refreshToken" : refresh
+            "refreshToken" : refresh,
+            "tokenExpiresIn": token_expires_in
         }), 200
     return jsonify({"message": "Invalid email or password"}), 401
 
@@ -76,6 +78,7 @@ def register():
 @cross_origin()
 @jwt_required()
 def create_workout():
+    
     title = request.json.get('title')
     reps = request.json.get('reps')
     load = request.json.get('load')
@@ -88,9 +91,12 @@ def create_workout():
 
 #All Workouts
 @app.route("/api/workouts", methods=["GET"])
+
 @cross_origin()
 @jwt_required()
 def get_workouts():
+    print(request.headers)
+    print(request.data)
     workouts = Workout.find_all()
     serialized_workouts = []
     for workout in workouts:

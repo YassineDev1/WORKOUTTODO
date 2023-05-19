@@ -61,6 +61,7 @@ class Workout:
 
     @staticmethod
     def find_by_id(workout_id):
+        print("workout", workout_id)
         w_id = ObjectId(workout_id)
         workout = mongodb_client.db.workouts.find_one({"_id": w_id})
         if not workout:
