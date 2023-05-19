@@ -1,6 +1,7 @@
 from application import  mongodb_client
 from bson import ObjectId
 from flask_bcrypt import check_password_hash
+from datetime import datetime
 
 class User:
     def __init__(self, name, email, password):
@@ -28,12 +29,14 @@ class Workout:
         self.title = title
         self.reps = reps
         self.load = load
+        self.created_at = datetime.now()
 
     def to_json(self):
         return {
             "title": self.title,
             "reps": self.reps,
-            "load": self.load
+            "load": self.load,
+            "createdAt": self.created_at.strftime("%Y-%m-%d %H:%M:%S")
         }
     
     @staticmethod
