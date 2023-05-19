@@ -31,6 +31,12 @@ def login():
         }), 200
     return jsonify({"message": "Invalid email or password"}), 401
 
+@app.route("/api/users/refresh-token", methods=["POST"])
+@jwt_required(refresh=True)
+def refresh_token():
+    current_user = get_jwt_identity()
+    access_token = create_access_token(identity=current_user)
+    return jsonify({"accessToken": access_token}), 200
 # User registration
 @app.route("/api/users/signup", methods=["POST"])
 def register():
@@ -49,7 +55,7 @@ def register():
     existing_user = User.find_by_email(email)
 
     if existing_user:
-        return jsonify({"message": "Email already exists"}), 206
+        return jsonify({"message": "Email already exists", "status":404})
 
     hashed_password = generate_password_hash(password).decode('utf-8')
 
@@ -92,11 +98,11 @@ def get_workouts():
             "_id": str(workout._id),
             "title" : workout.title,
             "reps" : workout.reps,
-            "load" : workout.load
+            "load" : workout.load,
+            "createdAt" : workout.created_at
         }
         serialized_workouts.append(serialized_workout)
-    print(serialized_workouts)
-    return jsonify(workouts=serialized_workouts)
+    return jsonify(workouts=serialized_workouts), 200
 
 #Single Workout
 @app.route('/api/workouts/<workout_id>', methods=['GET'])
