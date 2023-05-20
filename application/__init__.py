@@ -21,6 +21,7 @@ app.config["JWT_SECRET_KEY"] = os.environ.get("JWT_SECRET_KEY")
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
 app.config["HOST"] = os.environ.get("HOST", "http://localhost:3000")
 app.config['CORS_HEADERS'] = 'Content-Type'
+app.config["MONGO_DBNAME"] = os.environ.get("MONGODB_DB")
 
 # Setup MongoDB
 mongodb_client = PyMongo(app)
