@@ -18,7 +18,4 @@ mongodb_client = PyMongo(app)
 bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
 
-
-
 from application import routes
-

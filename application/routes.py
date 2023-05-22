@@ -1,4 +1,3 @@
-# Import required libraries
 from application import app, mongodb_client
 from flask import jsonify, request, abort
 from flask_jwt_extended import (create_access_token, create_refresh_token, jwt_required, get_jwt_identity)
@@ -78,35 +77,42 @@ def register():
 @cross_origin()
 @jwt_required()
 def create_workout():
-    
+    user_id = get_jwt_identity()
     title = request.json.get('title')
     reps = request.json.get('reps')
     load = request.json.get('load')
+
     if not title or not reps or not load:
-        abort(400)  
-    workout = Workout(title=title, reps=reps, load=load)
+        abort(400)
+
+    workout = Workout(user_id=user_id, title=title, reps=reps, load=load)
     workout.save()
-    return jsonify(workout=workout.to_json()), 201 
+
+    return jsonify(workout=workout.to_json()), 201
+
 
 
 #All Workouts
 @app.route("/api/workouts", methods=["GET"])
-
 @cross_origin()
 @jwt_required()
 def get_workouts():
-    workouts = Workout.find_all()
+    user_id = get_jwt_identity()
+    workouts = Workout.find_by_user_id(user_id)
+
     serialized_workouts = []
     for workout in workouts:
         serialized_workout = {
             "_id": str(workout._id),
-            "title" : workout.title,
-            "reps" : workout.reps,
-            "load" : workout.load,
-            "createdAt" : workout.created_at
+            "title": workout.title,
+            "reps": workout.reps,
+            "load": workout.load,
+            "createdAt": workout.created_at
         }
         serialized_workouts.append(serialized_workout)
+
     return jsonify(workouts=serialized_workouts), 200
+
 
 #Single Workout
 @app.route('/api/workouts/<workout_id>', methods=['GET'])
