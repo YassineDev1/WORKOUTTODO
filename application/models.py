@@ -25,7 +25,8 @@ class User:
         }
 
 class Workout:
-    def __init__(self, title, reps, load):
+    def __init__(self, user_id, title, reps, load):
+        self.user_id = user_id
         self.title = title
         self.reps = reps
         self.load = load
@@ -33,6 +34,7 @@ class Workout:
 
     def to_json(self):
         return {
+            "user_id": self.user_id,
             "title": self.title,
             "reps": self.reps,
             "load": self.load,
@@ -41,7 +43,7 @@ class Workout:
     
     @staticmethod
     def from_json(json):
-        workout = Workout(json['title'], json['reps'], json['load'])
+        workout = Workout(json['user_id'], json['title'], json['reps'], json['load'])
         if '_id' in json:
             workout._id = ObjectId(json['_id'])
         return workout
@@ -66,6 +68,11 @@ class Workout:
         if not workout:
             return None
         return Workout.from_json(workout)
+    @staticmethod
+    def find_by_user_id(user_id):
+        workouts = mongodb_client.db.workouts.find({"user_id": user_id})
+        return [Workout.from_json(workout) for workout in workouts]
+
 
     def delete(self):
         if hasattr(self, '_id'):
